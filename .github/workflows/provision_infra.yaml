@@ -1,33 +1,33 @@
 name: Provision Custom AWS Infra (users, S3, SNS, SES, etc.)
 
 on:
-workflow_dispath:
-  inputs:
-    team_name:
-        description: Team name (used as prefix). NOTE- This will be added to infrastructre names. For example if you provide 
-          an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "....." to override and have no team name/prefix added to resources.
-        required: true
+  workflow_dispatch:
+    inputs:
+      team_name:
+          description: Team name (used as prefix). NOTE- This will be added to infrastructre names. For example if you provide 
+            an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "....." to override and have no team name/prefix added to resources.
+          required: true
+          type: string
+      s3-bucket-names:
+        description: List of s3-buckets to create (or update/destroy), separated by commans. Ex) 'thumbnails, headshots, test-bucket'
+        required: false
         type: string
-    s3-bucket-names:
-      description: List of s3-buckets to create (or update/destroy), separated by commans. Ex) 'thumbnails, headshots, test-bucket'
-      required: false
-      type: string
-    iam_users:
-      descrption: List of users to create (or update/destroy), separated by commas. Ex) 'stone, zach'
-      required: false
-      type: string
-    # to do: add sqs, sns, ses
-    # possibly to do: add env param (dev, prod)
-    action:
-      description: 'Action to perform on infrastructre. DESTROY: WARNING action cant be reversed. APPLY: Actually perform the action. PLAN: Dry Run of what actions/outcomes will happen.'
-      required: true
-      type: choice
-      options:
-        - plan  
-        - apply
-        - destroy
-      default:
-        - apply
+      iam_users:
+        descrption: List of users to create (or update/destroy), separated by commas. Ex) 'stone, zach'
+        required: false
+        type: string
+      # to do: add sqs, sns, ses
+      # possibly to do: add env param (dev, prod)
+      action:
+        description: 'Action to perform on infrastructre. DESTROY: WARNING action cant be reversed. APPLY: Actually perform the action. PLAN: Dry Run of what actions/outcomes will happen.'
+        required: true
+        type: choice
+        options:
+          - plan  
+          - apply
+          - destroy
+        default:
+          - apply
 
 permissions:
   # Grants the workflow permissions to request an OIDC token form Github's toen service
