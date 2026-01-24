@@ -38,7 +38,7 @@ class InfraProvisioner:
     def prepare_terraform(self):
         tfvars_path = self.terraform_dir / "terraform.tfvars"
         with open(tfvars_path, "w") as tfvars:
-            tfvars.write(f'team_name = "{self.team_name}"')
+            tfvars.write(f'team_name = "{self.team_name}"\n\n')
             if self.s3_buckets:
                 tfvars.write('s3_buckets = [\n')
                 for bucket in self.s3_buckets:
