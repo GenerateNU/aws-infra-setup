@@ -13,7 +13,7 @@ on:
         required: false
         type: string
       iam_users:
-        descrption: List of users to create (or update/destroy), separated by commas. Ex) 'stone, zach'
+        description: List of users to create (or update/destroy), separated by commas. Ex) 'stone, zach'
         required: false
         type: string
       # to do: add sqs, sns, ses
@@ -27,7 +27,7 @@ on:
           - apply
           - destroy
         default:
-          - apply
+          apply
 
 permissions:
   # Grants the workflow permissions to request an OIDC token form Github's toen service
