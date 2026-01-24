@@ -91,10 +91,6 @@ class InfraProvisioner:
         if self.action == 'plan':
             return
         elif self.action in ('apply', 'destroy'):
-            confirm = input(f"Are you sure you want to {self.action} the infrastructure? Please check the plan output to see predicted changes. (y/n): ").strip().lower()
-            if confirm != 'y':
-                print(f"{self.action.capitalize()} cancelled by user.")
-                sys.exit(0)
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
             if not self.run_terraform(['terraform', tf_cmd] + targets):
                 sys.exit(1)

@@ -36,7 +36,7 @@ permissions:
   
 
 jobs:
-  terraform-auth:
+  provision-infra:
     runs-on: ubuntu-latest
     
     steps:
