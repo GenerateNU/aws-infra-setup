@@ -27,7 +27,7 @@ class InfraProvisioner:
             raise ValueError(f"Invalid action: {self.action}")
 
         if self.team_name != ".....":
-            self.team_name = self.team_name.lowercase().replace(r"\s+", "")
+            self.team_name = self.team_name.replace(r"\s+", "")
 
         if s3_buckets_input:
             self.s3_buckets = [bucket.strip() for bucket in s3_buckets_input.split(",")]
