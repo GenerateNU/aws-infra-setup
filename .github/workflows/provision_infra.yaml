@@ -8,7 +8,7 @@ on:
             an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "....." to override and have no team name/prefix added to resources.
           required: true
           type: string
-      s3-bucket-names:
+      s3_bucket_names:
         description: List of s3-buckets to create (or update/destroy), separated by commans. Ex) 'thumbnails, headshots, test-bucket'
         required: false
         type: string
@@ -54,10 +54,25 @@ jobs:
           # adding a role session name for better CloudTrail tracking - audit log of terraform actions
           role-session-name: GitHubActions-${{ github.run_id }}
 
-      # - name: Terraform Init
-      #   run: terraform init 
-      
-      # - name: Terraform Plan
-      #   run: terraform plan      
-      # - name: Terraform Apply
-      #   run: terraform apply # TO DO; required user input/confirmation -auto-approve
+      - name: Setup terraform
+        uses: hasicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install boto3
+
+      - name: Run Terraform Provisioning
+        run: |
+          python infra-provisioner/provisioner.py
+        env:
+          TEAM_NAME: ${{ tnputs.team_name }}
+          S3_BUCKETS: ${{ inputs.s3_bucket_names }}
+          IAM_USERS: ${{ inputs.iam_users }}
+          ACTION: ${{ inputs.action }}
