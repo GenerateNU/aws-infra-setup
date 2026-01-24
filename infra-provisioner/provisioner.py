@@ -77,7 +77,7 @@ class InfraProvisioner:
             print(f"Result:\n\n{result}")
             return True
         except subprocess.CalledProcessError as e:
-            self.log(f"Terraform command failed: {e}", 'error')
+            print(f"Terraform command failed: {e}")
             return False
 
     def execute_terraform(self):
