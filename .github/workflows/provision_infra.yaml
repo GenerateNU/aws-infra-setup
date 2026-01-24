@@ -28,3 +28,36 @@ workflow_dispath:
         - destroy
       default:
         - apply
+
+permissions:
+  # Grants the workflow permissions to request an OIDC token form Github's toen service
+  id-token: write 
+  contents: read # Allow workflow to read/checkout this repo
+  
+
+jobs:
+  terraform-auth:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # This step authenticates with AWS using the IAM role
+      # So we can get temporary AWS Creds to perform infra actions.
+      # Automatically sets AWS env vars that terraform will automatically use to auth with AWS.
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::478867930449:role/terraform-deployer
+          aws-region: us-east-2
+          # adding a role session name for better CloudTrail tracking - audit log of terraform actions
+          role-session-name: GitHubActions-${{ github.run_id }}
+
+      # - name: Terraform Init
+      #   run: terraform init 
+      
+      # - name: Terraform Plan
+      #   run: terraform plan      
+      # - name: Terraform Apply
+      #   run: terraform apply # TO DO; required user input/confirmation -auto-approve
