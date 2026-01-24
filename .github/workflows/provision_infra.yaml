@@ -72,7 +72,7 @@ jobs:
         run: |
           python infra-provisioner/provisioner.py
         env:
-          TEAM_NAME: ${{ tnputs.team_name }}
+          TEAM_NAME: ${{ inputs.team_name }}
           S3_BUCKETS: ${{ inputs.s3_bucket_names }}
           IAM_USERS: ${{ inputs.iam_users }}
           ACTION: ${{ inputs.action }}
