@@ -55,7 +55,7 @@ jobs:
           role-session-name: GitHubActions-${{ github.run_id }}
 
       - name: Setup terraform
-        uses: hasicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.6.0
 
