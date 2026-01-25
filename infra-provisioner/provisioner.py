@@ -21,7 +21,7 @@ class InfraProvisioner:
         s3_buckets_input = os.getenv('S3_BUCKETS', '').strip()
         iam_users_input = os.getenv('IAM_USERS', '').strip()
         self.action = os.getenv('ACTION', '')
-        possible_actions = ['plan', 'apply', 'destroy']
+        possible_actions = ['plan: apply', 'plan: destroy', 'apply', 'destroy']
 
         if not self.action or self.action not in possible_actions:
             raise ValueError(f"Invalid action: {self.action}")
