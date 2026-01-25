@@ -35,6 +35,9 @@ class InfraProvisioner:
         if iam_users_input:
             self.iam_users = [user.strip() for user in iam_users_input.split(",")]
 
+        print("DEBUG")
+        print(f"Bukcets: {self.s3_buckets}, Users: {self.iam_users}, Team: {self.team_name}")
+
     def prepare_terraform(self):
         tfvars_path = self.terraform_dir / "terraform.tfvars"
         print(f"DEBUG: Writing terraform.tfvars to:")
