@@ -35,16 +35,9 @@ class InfraProvisioner:
         if iam_users_input:
             self.iam_users = [user.strip() for user in iam_users_input.split(",")]
 
-        print("DEBUG")
-        print(f"Bukcets: {self.s3_buckets}, Users: {self.iam_users}, Team: {self.team_name}")
 
     def prepare_terraform(self):
         tfvars_path = self.terraform_dir / "terraform.tfvars"
-        print(f"DEBUG: Writing terraform.tfvars to:")
-        print(f"   {tfvars_path.absolute()}")
-        print(f"   Exists before writing: {tfvars_path.exists()}")
-        print(f"   Terraform dir: {self.terraform_dir.absolute()}")
-        print(f"   Terraform dir exists: {self.terraform_dir.exists()}")
         with open(tfvars_path, "w") as tfvars:
             tfvars.write(f'team_name = "{self.team_name}"\n\n')
             if self.s3_buckets:
@@ -67,13 +60,6 @@ class InfraProvisioner:
             print("ERROR: Failed to create terraform.tfvars!")
             sys.exit(1)
         
-        print(f"\n✓ File written: {tfvars_path.stat().st_size} bytes")
-        
-        content = tfvars_path.read_text()
-        print(f"\n📄 terraform.tfvars content:")
-        print("-" * 60)
-        print(content)
-        print("-" * 60 + "\n")
 
     # def get_terraform_targets(self) -> List[str]:
     #     targets = []
