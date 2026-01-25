@@ -18,7 +18,7 @@ class InfraProvisioner:
 
     def validate_inputs(self):
         self.team_name = os.getenv('TEAM_NAME', '').strip()
-        s3_buckets_input = os.getenv('S3_BUCKET_NAMES', '').strip()
+        s3_buckets_input = os.getenv('S3_BUCKETS', '').strip()
         iam_users_input = os.getenv('IAM_USERS', '').strip()
         self.action = os.getenv('ACTION', '')
         possible_actions = ['plan', 'apply', 'destroy']
