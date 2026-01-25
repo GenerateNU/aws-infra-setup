@@ -66,7 +66,6 @@ class InfraProvisioner:
         return targets
     
     def run_terraform(self, command: List[str]) -> bool:
-        """Execute a terraform command."""
         try:
             result = subprocess.run(
                 command,
@@ -74,7 +73,6 @@ class InfraProvisioner:
                 check=True,
                 text=True
             )
-            print(f"Result:\n\n{result}")
             return True
         except subprocess.CalledProcessError as e:
             print(f"Terraform command failed: {e}")
@@ -85,14 +83,12 @@ class InfraProvisioner:
             sys.exit(1)
         targets = self.get_terraform_targets()
         # Always print the plan
-        print("\n--- Terraform Plan Output ---\n")
-        self.run_terraform(['terraform', 'plan'] + targets)
-        print("\n----------------------------\n")
+        self.run_terraform(['terraform', 'plan'] + targets + '-auto-approve')
         if self.action == 'plan':
             return
         elif self.action in ('apply', 'destroy'):
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
-            if not self.run_terraform(['terraform', tf_cmd] + targets):
+            if not self.run_terraform(['terraform', tf_cmd] + targets + '-auto-approve'):
                 sys.exit(1)
             if self.action == 'apply':
                 print("Infrastructure provisioned successfully!")
