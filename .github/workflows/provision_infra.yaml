@@ -1,21 +1,21 @@
-name: Provision Custom AWS Infra (users, S3, SNS, SES, etc.)
+name: Provision Custom AWS Infra
 
 on:
   workflow_dispatch:
     inputs:
       team_name:
           description: Team name (used as prefix). NOTE- This will be added to infrastructre names. For example if you provide 
-            an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "....." to override and have no team name/prefix added to resources.
+            an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "N/A" to override and have no team name/prefix added to resources.
           required: true
           type: string
       s3_bucket_names:
         description: List of s3-buckets to create (or update/destroy), separated by commans. Ex) 'thumbnails, headshots, test-bucket'
         required: false
         type: string
-      iam_users:
-        description: List of users to create (or update/destroy), separated by commas. Ex) 'stone, zach'
-        required: false
-        type: string
+      # iam_users:
+      #   description: List of users to create (or update/destroy), separated by commas. Ex) 'stone, pebble'
+      #   required: false
+      #   type: string
       # to do: add sqs, sns, ses
       # possibly to do: add env param (dev, prod)
       action:
@@ -23,11 +23,17 @@ on:
         required: true
         type: choice
         options:
-          - plan  
+          - 'plan: apply'
+          - 'plan: destroy'
           - apply
           - destroy
         default:
-          apply
+          'plan: apply'
+      reviewed_plan:
+        description: '*** IMPORTANT: You must run the "plan" action before "apply" or "destroy" to review the output. Confirm you have ran a "plan" job and reviewed the output before proceesing to apply/destory.'
+        required: false
+        type: boolean
+        default: 'false'
 
 permissions:
   # Grants the workflow permissions to request an OIDC token form Github's toen service
@@ -36,12 +42,22 @@ permissions:
   
 
 jobs:
-  terraform-auth:
+  provision-infra:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Verify Confirmation
+        if: inputs.action != 'plan'
+        run: |
+          if [ ! "${{ inputs.reviewed_plan }}" ]; then
+            echo "ERROR: Confirmation required for ${{ inputs.action }}"
+            echo "To proceed with ${{ inputs.action }} make sure you have reveiwed the plan, and confirm so in the input parameter (reviewed_plan)"
+            exit 1
+          fi
+          echo "Action confirmed: ${{ inputs.action }}"
       
       # This step authenticates with AWS using the IAM role
       # So we can get temporary AWS Creds to perform infra actions.
@@ -64,9 +80,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
-        run: |
-          pip install boto3
+      # - name: Install Python dependencies
+      #   run: |
+      #     pip install boto3
 
       - name: Run Terraform Provisioning
         run: |

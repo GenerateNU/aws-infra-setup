@@ -18,16 +18,16 @@ class InfraProvisioner:
 
     def validate_inputs(self):
         self.team_name = os.getenv('TEAM_NAME', '').strip()
-        s3_buckets_input = os.getenv('S3_BUCKET_NAMES', '').strip()
+        s3_buckets_input = os.getenv('S3_BUCKETS', '').strip()
         iam_users_input = os.getenv('IAM_USERS', '').strip()
         self.action = os.getenv('ACTION', '')
-        possible_actions = ['plan', 'apply', 'destroy']
+        possible_actions = ['plan: apply', 'plan: destroy', 'apply', 'destroy']
 
         if not self.action or self.action not in possible_actions:
             raise ValueError(f"Invalid action: {self.action}")
 
-        if self.team_name != ".....":
-            self.team_name = self.team_name.lowercase().replace(r"\s+", "")
+        if self.team_name != "N/A":
+            self.team_name = self.team_name.replace(r"\s+", "")
 
         if s3_buckets_input:
             self.s3_buckets = [bucket.strip() for bucket in s3_buckets_input.split(",")]
@@ -35,10 +35,11 @@ class InfraProvisioner:
         if iam_users_input:
             self.iam_users = [user.strip() for user in iam_users_input.split(",")]
 
+
     def prepare_terraform(self):
         tfvars_path = self.terraform_dir / "terraform.tfvars"
         with open(tfvars_path, "w") as tfvars:
-            tfvars.write(f'team_name = "{self.team_name}"')
+            tfvars.write(f'team_name = "{self.team_name}"\n\n')
             if self.s3_buckets:
                 tfvars.write('s3_buckets = [\n')
                 for bucket in self.s3_buckets:
@@ -55,18 +56,22 @@ class InfraProvisioner:
             else:
                 tfvars.write('iam_users = []\n\n')
 
-    def get_terraform_targets(self) -> List[str]:
-        targets = []
+        if not tfvars_path.exists():
+            print("ERROR: Failed to create terraform.tfvars!")
+            sys.exit(1)
         
-        if self.s3_buckets:
-            targets.append('-target=module.s3')
-        # if self.iam_users:
-        #     targets.append('-target=module.iam_users')
+
+    # def get_terraform_targets(self) -> List[str]:
+    #     targets = []
         
-        return targets
+    #     if self.s3_buckets:
+    #         targets.append('-target=module.s3')
+    #     # if self.iam_users:
+    #     #     targets.append('-target=module.iam_users')
+        
+    #     return targets
     
     def run_terraform(self, command: List[str]) -> bool:
-        """Execute a terraform command."""
         try:
             result = subprocess.run(
                 command,
@@ -74,29 +79,24 @@ class InfraProvisioner:
                 check=True,
                 text=True
             )
-            print(f"Result:\n\n{result}")
             return True
         except subprocess.CalledProcessError as e:
-            self.log(f"Terraform command failed: {e}", 'error')
+            print(f"Terraform command failed: {e}")
             return False
 
     def execute_terraform(self):
         if not self.run_terraform(['terraform', 'init']):
             sys.exit(1)
-        targets = self.get_terraform_targets()
         # Always print the plan
-        print("\n--- Terraform Plan Output ---\n")
-        self.run_terraform(['terraform', 'plan'] + targets)
-        print("\n----------------------------\n")
-        if self.action == 'plan':
+        if 'destroy' in self.action:
+            self.run_terraform(['terraform', 'plan', '-destroy'])
+        else:
+            self.run_terraform(['terraform', 'plan'])
+        if self.action.startswith('plan'):
             return
         elif self.action in ('apply', 'destroy'):
-            confirm = input(f"Are you sure you want to {self.action} the infrastructure? Please check the plan output to see predicted changes. (y/n): ").strip().lower()
-            if confirm != 'y':
-                print(f"{self.action.capitalize()} cancelled by user.")
-                sys.exit(0)
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
-            if not self.run_terraform(['terraform', tf_cmd] + targets):
+            if not self.run_terraform(['terraform', tf_cmd, '-auto-approve']):
                 sys.exit(1)
             if self.action == 'apply':
                 print("Infrastructure provisioned successfully!")
