@@ -5,7 +5,5 @@ resource "aws_s3_bucket" "bucket" {
   
   tags = {
     Name        = each.value
-    ManagedBy   = "Terraform"
-    TeamPrefix  = var.team_prefix
   }
 }
