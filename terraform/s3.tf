@@ -30,6 +30,18 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
   restrict_public_buckets = true
 }
 
+# Enable bucket versioning, to keep the last 3 copies of an object 
+resource "aws_s3_bucket_versioning" "bucket" {
+  for_each = toset(var.s3_buckets)
+  
+  bucket = aws_s3_bucket.bucket[each.key].id
+  
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Limit versioning to 3 copies 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
   for_each = toset(var.s3_buckets)
   
@@ -38,6 +50,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
   rule {
     id     = "limit-version-retention"
     status = "Enabled"
+
+    filter {}  #  applies to all objects
     
     noncurrent_version_expiration {
       noncurrent_days           = 0  # Optional: wait 1 day before deleting
@@ -45,13 +59,4 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
     }
   }
 
-  rule {
-    id     = "transition-old-objects"
-    status = "Enabled"
-    
-    transition {
-      days          = 90
-      storage_class = "STANDARD_IA"
-    }
-  }
 }
