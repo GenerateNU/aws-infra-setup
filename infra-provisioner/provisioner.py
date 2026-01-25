@@ -37,6 +37,11 @@ class InfraProvisioner:
 
     def prepare_terraform(self):
         tfvars_path = self.terraform_dir / "terraform.tfvars"
+        print(f"DEBUG: Writing terraform.tfvars to:")
+        print(f"   {tfvars_path.absolute()}")
+        print(f"   Exists before writing: {tfvars_path.exists()}")
+        print(f"   Terraform dir: {self.terraform_dir.absolute()}")
+        print(f"   Terraform dir exists: {self.terraform_dir.exists()}")
         with open(tfvars_path, "w") as tfvars:
             tfvars.write(f'team_name = "{self.team_name}"\n\n')
             if self.s3_buckets:
