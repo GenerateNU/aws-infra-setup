@@ -23,11 +23,12 @@ on:
         required: true
         type: choice
         options:
-          - plan  
+          - 'plan: apply'
+          - 'plan: destroy'
           - apply
           - destroy
         default:
-          plan
+          'plan: apply'
       reviewed_plan:
         description: '*** IMPORTANT: You must run the "plan" action before "apply" or "destroy" to review the output. Confirm you have ran a "plan" job and reviewed the output before proceesing to apply/destory.'
         required: false
