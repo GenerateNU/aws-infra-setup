@@ -60,6 +60,18 @@ class InfraProvisioner:
             else:
                 tfvars.write('iam_users = []\n\n')
 
+        if not tfvars_path.exists():
+            print("ERROR: Failed to create terraform.tfvars!")
+            sys.exit(1)
+        
+        print(f"\n✓ File written: {tfvars_path.stat().st_size} bytes")
+        
+        content = tfvars_path.read_text()
+        print(f"\n📄 terraform.tfvars content:")
+        print("-" * 60)
+        print(content)
+        print("-" * 60 + "\n")
+
     # def get_terraform_targets(self) -> List[str]:
     #     targets = []
         
