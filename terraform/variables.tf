@@ -9,3 +9,9 @@ variable "s3_buckets" {
   type        = list(string)
   default     = []
 }
+
+variable "iam_users" {
+  description = "List of IAM users to create"
+  type        = list(string)
+  default     = []
+}

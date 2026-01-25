@@ -55,15 +55,15 @@ class InfraProvisioner:
             else:
                 tfvars.write('iam_users = []\n\n')
 
-    def get_terraform_targets(self) -> List[str]:
-        targets = []
+    # def get_terraform_targets(self) -> List[str]:
+    #     targets = []
         
-        if self.s3_buckets:
-            targets.append('-target=module.s3')
-        # if self.iam_users:
-        #     targets.append('-target=module.iam_users')
+    #     if self.s3_buckets:
+    #         targets.append('-target=module.s3')
+    #     # if self.iam_users:
+    #     #     targets.append('-target=module.iam_users')
         
-        return targets
+    #     return targets
     
     def run_terraform(self, command: List[str]) -> bool:
         try:
@@ -81,14 +81,13 @@ class InfraProvisioner:
     def execute_terraform(self):
         if not self.run_terraform(['terraform', 'init']):
             sys.exit(1)
-        targets = self.get_terraform_targets()
         # Always print the plan
-        self.run_terraform(['terraform', 'plan'] + targets + ['-auto-approve'])
+        self.run_terraform(['terraform', 'plan'])
         if self.action == 'plan':
             return
         elif self.action in ('apply', 'destroy'):
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
-            if not self.run_terraform(['terraform', tf_cmd] + targets + ['-auto-approve']):
+            if not self.run_terraform(['terraform', tf_cmd, '-auto-approve']):
                 sys.exit(1)
             if self.action == 'apply':
                 print("Infrastructure provisioned successfully!")
