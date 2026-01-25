@@ -27,7 +27,12 @@ on:
           - apply
           - destroy
         default:
-          apply
+          plan
+      reviewed_plan:
+        description: '*** IMPORTANT: You must run the "plan" action before "apply" or "destroy" to review the output. Confirm you have ran a "plan" job and reviewed the output before proceesing to apply/destory.'
+        required: false
+        type: boolean
+        default: 'false'
 
 permissions:
   # Grants the workflow permissions to request an OIDC token form Github's toen service
@@ -42,6 +47,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Verify Confirmation
+        if: inputs.action != 'plan'
+        run: |
+          if [ ! "${{ inputs.confirm_action }}" ]; then
+            echo "ERROR: Confirmation required for ${{ inputs.action }}"
+            echo "To proceed with ${{ inputs.action }} make sure you have reveiwed the plan, and confirm so in the input parameter (reviewed_plan)"
+            exit 1
+          fi
+          echo "Action confirmed: ${{ inputs.action }}"
       
       # This step authenticates with AWS using the IAM role
       # So we can get temporary AWS Creds to perform infra actions.
