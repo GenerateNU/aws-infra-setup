@@ -54,7 +54,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
     filter {}  #  applies to all objects
     
     noncurrent_version_expiration {
-      noncurrent_days           = 0  # Optional: wait 1 day before deleting
+      noncurrent_days           = 1
       newer_noncurrent_versions = 2  # Keep only the 2 most recent noncurrent versions
     }
   }
