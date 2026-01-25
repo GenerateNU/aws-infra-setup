@@ -1,0 +1,19 @@
+# Terraform directories
+**/.terraform/*
+**/.terraform.lock.hcl
+
+bootstrap/.terraform/*
+
+# State files - NEVER commit these
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+
+*.tfvars
+*.tfvars.json
+=
+# Temporary files
+*.tmp
+*.temp
+.terraform.tfstate.lock.info
