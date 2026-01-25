@@ -1,4 +1,4 @@
-name: Provision Custom AWS Infra (users, S3, SNS, SES, etc.)
+name: Provision Custom AWS Infra
 
 on:
   workflow_dispatch:

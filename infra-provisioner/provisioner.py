@@ -88,11 +88,11 @@ class InfraProvisioner:
         if not self.run_terraform(['terraform', 'init']):
             sys.exit(1)
         # Always print the plan
-        if self.action == 'destroy':
+        if self.action == 'plan: destroy':
             self.run_terraform(['terraform', 'plan', '-destroy'])
         else:
             self.run_terraform(['terraform', 'plan'])
-        if self.action == 'plan':
+        if self.action.startswith('plan'):
             return
         elif self.action in ('apply', 'destroy'):
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
