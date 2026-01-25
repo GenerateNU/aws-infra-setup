@@ -26,7 +26,7 @@ class InfraProvisioner:
         if not self.action or self.action not in possible_actions:
             raise ValueError(f"Invalid action: {self.action}")
 
-        if self.team_name != ".....":
+        if self.team_name != "N/A":
             self.team_name = self.team_name.replace(r"\s+", "")
 
         if s3_buckets_input:

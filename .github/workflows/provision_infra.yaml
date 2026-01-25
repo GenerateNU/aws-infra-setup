@@ -5,7 +5,7 @@ on:
     inputs:
       team_name:
           description: Team name (used as prefix). NOTE- This will be added to infrastructre names. For example if you provide 
-            an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "....." to override and have no team name/prefix added to resources.
+            an S3 bucket name "headshots" and team "prisere" your bucket will be named "prisere-headshots". Input "N/A" to override and have no team name/prefix added to resources.
           required: true
           type: string
       s3_bucket_names:
