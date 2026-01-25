@@ -83,12 +83,12 @@ class InfraProvisioner:
             sys.exit(1)
         targets = self.get_terraform_targets()
         # Always print the plan
-        self.run_terraform(['terraform', 'plan'] + targets + '-auto-approve')
+        self.run_terraform(['terraform', 'plan'] + targets + ['-auto-approve'])
         if self.action == 'plan':
             return
         elif self.action in ('apply', 'destroy'):
             tf_cmd = 'apply' if self.action == 'apply' else 'destroy'
-            if not self.run_terraform(['terraform', tf_cmd] + targets + '-auto-approve'):
+            if not self.run_terraform(['terraform', tf_cmd] + targets + ['-auto-approve']):
                 sys.exit(1)
             if self.action == 'apply':
                 print("Infrastructure provisioned successfully!")
