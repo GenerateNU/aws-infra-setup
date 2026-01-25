@@ -51,7 +51,7 @@ jobs:
       - name: Verify Confirmation
         if: inputs.action != 'plan'
         run: |
-          if [ ! "${{ inputs.confirm_action }}" ]; then
+          if [ ! "${{ inputs.reviewed_plan }}" ]; then
             echo "ERROR: Confirmation required for ${{ inputs.action }}"
             echo "To proceed with ${{ inputs.action }} make sure you have reveiwed the plan, and confirm so in the input parameter (reviewed_plan)"
             exit 1
