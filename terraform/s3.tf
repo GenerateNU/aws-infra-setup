@@ -3,6 +3,9 @@ resource "aws_s3_bucket" "bucket" {
   
   bucket = each.value
   
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Ensure datas encrypted at rest (true by default)
@@ -16,6 +19,10 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket" {
       sse_algorithm = "AES256"  # aws managed free encryption
     }
   }
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Block public access
@@ -28,6 +35,10 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Enable bucket versioning, to keep the last 3 copies of an object 
@@ -38,6 +49,10 @@ resource "aws_s3_bucket_versioning" "bucket" {
   
   versioning_configuration {
     status = "Enabled"
+  }
+  
+  lifecycle {
+    prevent_destroy = true
   }
 }
 
@@ -58,5 +73,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket" {
       newer_noncurrent_versions = 2  # Keep only the 2 most recent noncurrent versions
     }
   }
-
+  
+  lifecycle {
+    prevent_destroy = true
+  }
 }
